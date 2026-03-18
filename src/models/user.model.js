@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt, { hash } from "bcrypt";
 
 const DataSchema = new mongoose.Schema(
-  {
+{
     email: {
       type: String,
       required: true,

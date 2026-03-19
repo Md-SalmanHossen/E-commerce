@@ -1,7 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
 import cors from "cors";
 import path from "path";
@@ -45,7 +44,6 @@ app.use(
 );
 
 // sanitize
-app.use(mongoSanitize());
 app.use(hpp());
 
 // body parser

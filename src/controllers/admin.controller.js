@@ -129,7 +129,33 @@ export const getAdmin = async (req, res) => {
   }
 };
 
+export const verifyAdmin = async (req, res) => {
+  try {
+    res.status(200).json({
+      success:true,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "something went wrong",
+    });
+  }
+};
+
 export const update = async (req, res) => {
+  try {
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "something went wrong",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
   try {
 
   } catch (error) {

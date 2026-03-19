@@ -7,5 +7,6 @@ import adminVerify from "../middlewares/auth-verification-admin.middleware.js";
 router.post("/admin-register", adminController.register);
 router.post("/admin-login", adminController.login);
 router.get("/admin", adminVerify, adminController.getAdmin);
+router.get('/admin-verify',adminVerify, adminController.verifyAdmin);
 
 export default router;

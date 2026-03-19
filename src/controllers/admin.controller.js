@@ -98,3 +98,45 @@ export const login = async (req, res) => {
     });
   }
 };
+
+export const getAdmin = async (req, res) => {
+  try {
+    let email=req.headers.email;
+    
+    let matchStage={
+      $match :{email},
+    }
+
+    let project={
+      $project:{
+        password:0,
+      }
+    }
+
+    let data=await adminModel.aggregate([matchStage,project]);
+
+    res.status(200).json({
+      success:true,
+      data:data[0]
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "something went wrong",
+    });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "something went wrong",
+    });
+  }
+};

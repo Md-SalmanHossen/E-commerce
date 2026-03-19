@@ -2,7 +2,17 @@ import { DecodeToken } from "../utility/token-helper.utility";
 
 const adminVerify = (req, res, next) => {
   let token = req.cookies["a_token"];
+  if (!token) {
+    return res.status(401).json({
+      status: 401, 
+      message: "Token missing" 
+    });
+  }
+
   let decoded = DecodeToken(token);
+  if (!decoded) {
+    return res.status(401).json({ status: 401, message: "Invalid Token" });
+  }
 
   if (decoded === null) {
     return res.status(401).json({
@@ -10,11 +20,12 @@ const adminVerify = (req, res, next) => {
       message: "Invalid Token",
     });
   }
-  let email=decoded['email'];
-  let _id=decoded['_id'];
 
-  req.headers.email=_id;
-  
+  let email = decoded["email"];
+  let _id = decoded["_id"];
+
+  req.headers.email = _id;
+
   next();
 };
 export default adminVerify;

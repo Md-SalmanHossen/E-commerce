@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const EncodeToken = () => {
+export const EncodeToken = (email,_id) => {
   let key = process.env.JWT_KEY;
   let expire = process.env.Expire_Time;
 

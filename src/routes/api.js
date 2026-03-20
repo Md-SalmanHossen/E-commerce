@@ -9,5 +9,6 @@ router.post("/admin-login", adminController.login);
 router.get("/admin", adminVerify, adminController.getAdmin);
 router.get('/admin-verify',adminVerify, adminController.verifyAdmin);
 router.get('/admin-logout',adminVerify, adminController.logout);
+router.put('/admin-update',adminVerify, adminController.update);
 
 export default router;

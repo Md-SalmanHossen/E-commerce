@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
     const hashedPass = await bcrypt.hash(password, 10);
 
-    const newAdmin =new adminModel({
+    const newAdmin = new adminModel({
       email,
       password: hashedPass,
     });
@@ -89,7 +89,6 @@ export const login = async (req, res) => {
       },
       token: token,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -101,25 +100,24 @@ export const login = async (req, res) => {
 
 export const getAdmin = async (req, res) => {
   try {
-    let email=req.headers.email;
-    
-    let matchStage={
-      $match :{email},
-    }
+    let email = req.headers.email;
 
-    let project={
-      $project:{
-        password:0,
-      }
-    }
+    let matchStage = {
+      $match: { email },
+    };
 
-    let data=await adminModel.aggregate([matchStage,project]);
+    let project = {
+      $project: {
+        password: 0,
+      },
+    };
+
+    let data = await adminModel.aggregate([matchStage, project]);
 
     res.status(200).json({
-      success:true,
-      data:data[0]
+      success: true,
+      data: data[0],
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -132,8 +130,8 @@ export const getAdmin = async (req, res) => {
 export const verifyAdmin = async (req, res) => {
   try {
     res.status(200).json({
-      success:true,
-    })
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -145,7 +143,65 @@ export const verifyAdmin = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
+    const { email, password } = req.body;
 
+    const _id = req.headers._id;
+    if (!_id) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID missing in headers",
+      });
+    }
+
+    const user = await adminModel.findById(_id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let updatedData = {};
+
+    if (email && email !== user.email) {
+      const emailExists = await adminModel.findOne({ email });
+
+      if (emailExists) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists.",
+        });
+      }
+      updatedData.email = email;
+    }
+
+    if (password) {
+      const hashedPass = await bcrypt.hash(password, 10);
+      updatedData.password = hashedPass;
+    }
+
+    if (Object.keys(updatedData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Nothing to update",
+      });
+    }
+
+    const updatedUser = await adminModel.findByIdAndUpdate(_id, updatedData, {
+      new: true,
+    });
+
+    let token = EncodeToken(updatedUser?.email, updatedUser?._id.toString());
+
+    res.cookie("a_token",token, options);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin updated successfully",
+      user: {
+        email: updatedUser.email,
+      },
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -157,13 +213,11 @@ export const update = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    
     res.clearCookie("a_token");
     res.status(200).json({
-      success:true,
-      message:'Logout successfully'
+      success: true,
+      message: "Logout successfully",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

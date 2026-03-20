@@ -29,18 +29,17 @@ export const register = async (req, res) => {
     }
 
     const hashedPass = await bcrypt.hash(password, 10);
-    
+
     const newAdmin = new userModel({
       email,
       password: hashedPass,
-    });   
+    });
     await newAdmin.save();
 
     res.status(201).json({
       success: true,
       message: "Registration successfully",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -89,7 +88,6 @@ export const login = async (req, res) => {
       },
       token: token,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -101,6 +99,30 @@ export const login = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
+    let email = req.headers.email;
+
+    if (!email) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let matchStage = {
+      $match: { email },
+    };
+
+    let project = {
+      $project: {
+        password: 0,
+      },
+    };
+    let userData = await userModel.aggregate([matchStage, project]);
+
+    res.status(200).json({
+      success: true,
+      data: userData,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

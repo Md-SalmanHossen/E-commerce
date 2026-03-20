@@ -2,9 +2,10 @@ import express from "express";
 import * as adminController from "../controllers/admin.controller.js";
 import adminVerify from "../middlewares/auth-verification-admin.middleware.js";
 import *as userController from '../controllers/user.controller.js'
+import userVerify from './../middlewares/auth-verification-user.middleware.js';
 
 
-const router = express.Router();
+const router = express.Router()
 
 
 //? =============super admin======================
@@ -19,5 +20,6 @@ router.put('/admin-update',adminVerify, adminController.update);
 //? ============user =============================
 router.post('/user-register', userController.register);
 router.post('/user-login', userController.login);
+router.get('/user',userVerify, userController.getUser);
 
 export default router;

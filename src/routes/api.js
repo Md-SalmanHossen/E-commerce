@@ -21,5 +21,6 @@ router.put('/admin-update',adminVerify, adminController.update);
 router.post('/user-register', userController.register);
 router.post('/user-login', userController.login);
 router.get('/user',userVerify, userController.getUser);
+router.get('/user-verify',userVerify, userController.verifyUser);
 
 export default router;

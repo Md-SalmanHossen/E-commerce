@@ -132,6 +132,20 @@ export const getUser = async (req, res) => {
   }
 };
 
+export const verifyUser = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};
+
 export const update = async (req, res) => {
   try {
   } catch (error) {

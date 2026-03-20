@@ -22,5 +22,6 @@ router.post('/user-register', userController.register);
 router.post('/user-login', userController.login);
 router.get('/user',userVerify, userController.getUser);
 router.get('/user-verify',userVerify, userController.verifyUser);
+router.get('/user-logout',userVerify, userController.logout);
 
 export default router;

@@ -18,5 +18,6 @@ router.put('/admin-update',adminVerify, adminController.update);
 
 //? ============user =============================
 router.post('/user-register', userController.register);
+router.post('/user-login', userController.login);
 
 export default router;

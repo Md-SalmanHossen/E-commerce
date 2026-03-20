@@ -1,0 +1,95 @@
+import bcrypt from "bcrypt";
+import { EncodeToken } from "./../utility/token-helper.utility.js";
+import userModel from "./../models/user.model.js";
+
+let options = {
+  maxAge: process.env.Cookie_Expire_Time,
+  httpOnly: false,
+  sameSite: "none",
+  secure: true,
+};
+
+export const register = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are require.",
+      });
+    }
+
+    const userExists = await userModel.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists. Try another email",
+      });
+    }
+
+    const hashedPass = await bcrypt.hash(password, 10);
+    
+    const newAdmin = new userModel({
+      email,
+      password: hashedPass,
+    });   
+    await newAdmin.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Registration successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.toString(),
+    });
+  }
+};

@@ -29,7 +29,6 @@ export const register = async (req, res) => {
     }
 
     const hashedPass = await bcrypt.hash(password, 10);
-
     const newAdmin = new adminModel({
       email,
       password: hashedPass,
@@ -40,6 +39,7 @@ export const register = async (req, res) => {
       success: true,
       message: "Admin created successfully",
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({

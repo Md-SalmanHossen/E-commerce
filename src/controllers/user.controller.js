@@ -148,22 +148,96 @@ export const verifyUser = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    const _id = req.headers._id;
+    if (!_id) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id missing",
+      });
+    }
+
+    const user = await userModel.findById(_id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let updateData = {};
+
+    if (email && email !== user.email) {
+      const emailExists = await userModel.findOne({ email });
+
+      if (emailExists && emailExists._id.toString() !== _id.toString()) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists",
+        });
+      }
+
+      updateData.email = email;
+    }
+
+    if (password) {
+      const isSamePass = await bcrypt.compare(password, user.password);
+      if (!isSamePass) {
+        updateData.password = await bcrypt.hash(password, 10);
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Nothing to update",
+      });
+    }
+
+    const updateUserField = await userModel.findByIdAndUpdate(_id, updateData, {
+      new: true,
+    });
+
+    if (!updateUserField) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (email || password) {
+      let token = EncodeToken(
+        updateUserField.email,
+        updateUserField._id.toString(),
+      );
+
+      res.cookie("u_token", token, options);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user: {
+        email: updateUserField.email,
+      },
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something went wrong",
-      error: error.toString(),
+      error: error.message,
     });
   }
 };
 
 export const logout = async (req, res) => {
   try {
-   res.clearCookie('u_token');
-   res.status(200).json({
-      success:true,
-      message:'Logout successfully'
-   });
+    res.clearCookie("u_token");
+    res.status(200).json({
+      success: true,
+      message: "Logout successfully",
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

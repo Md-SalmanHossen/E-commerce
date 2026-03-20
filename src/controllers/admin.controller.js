@@ -149,7 +149,7 @@ export const update = async (req, res) => {
     if (!_id) {
       return res.status(400).json({
         success: false,
-        message: "User ID missing in headers",
+        message: "User Id missing",
       });
     }
 
@@ -161,52 +161,67 @@ export const update = async (req, res) => {
       });
     }
 
-    let updatedData = {};
+    let updateData = {};
 
     if (email && email !== user.email) {
       const emailExists = await adminModel.findOne({ email });
 
-      if (emailExists) {
+      if (emailExists && emailExists._id.toString() !== _id.toString()) {
         return res.status(409).json({
           success: false,
-          message: "Email already exists.",
+          message: "Email already exists",
         });
       }
-      updatedData.email = email;
+
+      updateData.email = email;
     }
 
     if (password) {
-      const hashedPass = await bcrypt.hash(password, 10);
-      updatedData.password = hashedPass;
+      const isSamePass = await bcrypt.compare(password, user.password);
+      if (!isSamePass) {
+        updateData.password = await bcrypt.hash(password, 10);
+      }
     }
 
-    if (Object.keys(updatedData).length === 0) {
+    if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         success: false,
         message: "Nothing to update",
       });
     }
 
-    const updatedUser = await adminModel.findByIdAndUpdate(_id, updatedData, {
+    const updateUserField = await adminModel.findByIdAndUpdate(_id, updateData, {
       new: true,
     });
 
-    let token = EncodeToken(updatedUser?.email, updatedUser?._id.toString());
+    if (!updateUserField) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
-    res.cookie("a_token",token, options);
+    if (email || password) {
+      let token = EncodeToken(
+        updateUserField.email,
+        updateUserField._id.toString(),
+      );
+
+      res.cookie("a_token", token, options);
+    }
 
     res.status(200).json({
       success: true,
       message: "Admin updated successfully",
       user: {
-        email: updatedUser.email,
+        email: updateUserField.email,
       },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.toString(),
-      message: "something went wrong",
+      message: "Something went wrong",
+      error: error.message,
     });
   }
 };

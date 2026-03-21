@@ -148,7 +148,25 @@ export const verifyUser = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+      customer_name,
+      customer_address,
+      customer_city,
+      customer_country,
+      customer_fax,
+      customer_phone,
+      customer_postcode,
+      customer_state,
+      shipping_name,
+      shipping_address,
+      shipping_city,
+      shipping_country,
+      shipping_phone,
+      shipping_postcode,
+      shipping_state
+    } = req.body;
 
     const _id = req.headers._id;
     if (!_id) {
@@ -168,8 +186,26 @@ export const update = async (req, res) => {
 
     let updateData = {};
 
+    if (customer_name !== undefined) updateData.customer_name = customer_name;
+    if (customer_address !== undefined) updateData.customer_address = customer_address;
+    if (customer_city !== undefined) updateData.customer_city = customer_city;
+    if (customer_country !== undefined) updateData.customer_country = customer_country;
+    if (customer_fax !== undefined) updateData.customer_fax = customer_fax;
+    if (customer_phone !== undefined) updateData.customer_phone = customer_phone;
+    if (customer_postcode !== undefined) updateData.customer_postcode = customer_postcode;
+    if (customer_state !== undefined) updateData.customer_state = customer_state;
+
+    if (shipping_name !== undefined) updateData.shipping_name = shipping_name;
+    if (shipping_address !== undefined) updateData.shipping_address = shipping_address;
+    if (shipping_city !== undefined) updateData.shipping_city = shipping_city;
+    if (shipping_country !== undefined) updateData.shipping_country = shipping_country;
+    if (shipping_phone !== undefined) updateData.shipping_phone = shipping_phone;
+    if (shipping_postcode !== undefined) updateData.shipping_postcode = shipping_postcode;
+    if (shipping_state !== undefined) updateData.shipping_state = shipping_state;
+    
+    
     if (email && email !== user.email) {
-      const emailExists = await userModel.findOne({ email });
+    const emailExists = await userModel.findOne({ email });
 
       if (emailExists && emailExists._id.toString() !== _id.toString()) {
         return res.status(409).json({

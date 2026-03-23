@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const DataSchema = new mongoose.Schema({
     title: {type: String},
-    images: {type: String},
+    images: {type:[String]},
     sort_description: {type: String},
     price: {type: Number},
     isDiscount: {type: Boolean},
@@ -10,7 +10,7 @@ const DataSchema = new mongoose.Schema({
     remark:{type:String},
     stock:{type:Number},
     color:[String],
-    size:[Number],
+    size:[String],
     description:{type:String},
 
     category_id:{

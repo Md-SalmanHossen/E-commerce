@@ -30,5 +30,6 @@ router.put('/user-update',userVerify, userController.update);
 
 //? ==================== product =============================
 router.post('/product-create',adminVerify,productController.createProduct);
+router.get('/all-products/:category_id/:brand_id/:remark/:keyword/:per_page/:page_no', productController.getAllProduct);
 
 export default router;

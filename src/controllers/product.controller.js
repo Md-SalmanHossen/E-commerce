@@ -56,8 +56,9 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const read = async (req, res) => {
+export const getAllProduct = async (req, res) => {
   try {
+    
   } catch (error) {
     res.status(500).json({
       message: "Server external error",

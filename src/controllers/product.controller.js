@@ -66,3 +66,13 @@ export const getAllProduct = async (req, res) => {
     });
   }
 };
+export const getSingleProduct = async (req, res) => {
+  try {
+    
+  } catch (error) {
+    res.status(500).json({
+      message: "Server external error",
+      error: error.toString(),
+    });
+  }
+};
